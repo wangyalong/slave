@@ -1,0 +1,10 @@
+*.pyc
+!*.py
+!*.sh
+!*readme
+!*.ini
+!*.conf
+!*.cfg
+!.gitignore
+mioji/
+.idea
