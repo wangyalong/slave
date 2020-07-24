@@ -14,7 +14,7 @@ import os
 import redis
 import mioji.common.spider
 import mioji.common.pool
-from crawler.controller.slave import Slave
+from crawler.controller.subordinate import Subordinate
 from crawler.worker import Workers
 from workload import ControllerWorkload
 from common.task import Task
@@ -74,9 +74,9 @@ def load_parsers(config):
     parsers = {}
 
     sections = config.sections()
-    sections.remove('slave')
+    sections.remove('subordinate')
     sections.remove('proxy')
-    sections.remove('master')
+    sections.remove('main')
     for ele in sections:
         parsers[ele] = dict(config.items(ele))
 
@@ -85,9 +85,9 @@ def load_parsers(config):
 
 def getallSource(config):
     sections = config.sections()
-    sections.remove('slave')
+    sections.remove('subordinate')
     sections.remove('proxy')
-    sections.remove('master')
+    sections.remove('main')
     sections.remove('data_type')
     return sections
 
@@ -142,7 +142,7 @@ def work(task):
                 error, proxy_or_ticket = error_value
         except Exception, e:
             error_info = str(traceback.format_exc().split('\n'))
-            logger.error("[Parser Exception in slave: task_data:%s  error:%s][traceback:%s]",
+            logger.error("[Parser Exception in subordinate: task_data:%s  error:%s][traceback:%s]",
                          task.task_data, str(e), error_info)
             error = SLAVE_ERROR
 
@@ -249,14 +249,14 @@ def request(params):
 
             task.req_md5 = task.ticket_info.get('md5', 'default_md5')
 
-            task.master_info = req_task.get('master_info', 'default_host')
-            task.host = task.master_info.get('master_addr')
+            task.main_info = req_task.get('main_info', 'default_host')
+            task.host = task.main_info.get('main_addr')
 
-            task.redis_host = task.master_info.get('redis_addr').split(':')[0]
-            task.redis_port = task.master_info.get('redis_addr').split(':')[-1]
+            task.redis_host = task.main_info.get('redis_addr').split(':')[0]
+            task.redis_port = task.main_info.get('redis_addr').split(':')[-1]
 
-            task.redis_db = task.master_info.get('redis_db')
-            task.redis_passwd = task.master_info.get('redis_passwd')
+            task.redis_db = task.main_info.get('redis_db')
+            task.redis_passwd = task.main_info.get('redis_passwd')
 
             task.req_qid_md5 = task.req_qid + '-' + task.req_md5
             task.other_info = req_task.get('other_info', {})
@@ -334,12 +334,12 @@ if __name__ == "__main__":
             mioji.common.spider.need_write_file = False
 
     port = int(sys.argv[1])
-    master_host = config_helper.master_host
+    main_host = config_helper.main_host
 
     sources = getallSource(config_helper.config)
 
     workload = ControllerWorkload(
-        master_host, sources, data_type_str, recv_real_time_request=is_recv_real_time_request)
+        main_host, sources, data_type_str, recv_real_time_request=is_recv_real_time_request)
 
     parsers = load_parsers(config_helper.config)
 
@@ -349,12 +349,12 @@ if __name__ == "__main__":
     if host in mt_ip_dict:
         host = mt_ip_dict[host]
 
-    slave = Slave(host, port, master_host, workers,
+    subordinate = Subordinate(host, port, main_host, workers,
                   recv_real_time_request=is_recv_real_time_request)
 
-    slave.info.name = 'random_client'
-    slave.register("/rtquery", request)
-    slave.register("/restart_process", restart_process)
-    slave.register("/spider_pool_size", spider_pool_size)
-    info = slave.info
-    slave.run()
+    subordinate.info.name = 'random_client'
+    subordinate.register("/rtquery", request)
+    subordinate.register("/restart_process", restart_process)
+    subordinate.register("/spider_pool_size", spider_pool_size)
+    info = subordinate.info
+    subordinate.run()

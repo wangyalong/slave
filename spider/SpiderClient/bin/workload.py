@@ -61,7 +61,7 @@ class ControllerWorkload(WorkloadStorable):
 
     def get_workloads(self):
         """
-            从master取一批workloads
+            从main取一批workloads
             get every TASK_TIME_SPAN (s), up to TASK_COUNT
         """
         task_length = TASK_COUNT - self.tasks.qsize()
@@ -80,7 +80,7 @@ class ControllerWorkload(WorkloadStorable):
             result = result.strip('\0').strip()
             self.new_tasks = eval(result)
             logger.info(
-                'from master get task count is : {0} / {1}'.format(len(self.new_tasks), need_task))
+                'from main get task count is : {0} / {1}'.format(len(self.new_tasks), need_task))
 
         except Exception, e:
             logger.info('GET TASKS ERROR: ' + str(e))
@@ -104,11 +104,11 @@ class ControllerWorkload(WorkloadStorable):
 
             except Exception, e:
                 logger.info(
-                    'add task from master to tasks fail. error = ' + str(e))
+                    'add task from main to tasks fail. error = ' + str(e))
                 break
 
         if get_task_count > 0:
-            logger.info("get new task from master: " + str(get_task_count))
+            logger.info("get new task from main: " + str(get_task_count))
 
         return True
 
@@ -200,7 +200,7 @@ class ControllerWorkload(WorkloadStorable):
                 "/complete_workload?q=" + urllib.quote(completed_task) + other_query)
             self.__tasks_status = self.__tasks_status[len_task:]
         except Exception, e:
-            logger.info("complete task to master fail. task_count=" +
+            logger.info("complete task to main fail. task_count=" +
                         str(len_task) + ' err = ' + str(e))
 
         return True
