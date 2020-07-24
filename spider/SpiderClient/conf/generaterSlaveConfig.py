@@ -4,8 +4,8 @@ import ConfigParser
 import MySQLdb
 
 
-def generaterSlaveConfig():
-    for cfg_file_name in ['slave.spider.ini', 'slave.validation.ini', 'slave.startwithD.ini']:
+def generaterSubordinateConfig():
+    for cfg_file_name in ['subordinate.spider.ini', 'subordinate.validation.ini', 'subordinate.startwithD.ini']:
 
         config = ConfigParser.ConfigParser()
         config.add_section('data_type')
@@ -23,18 +23,18 @@ def generaterSlaveConfig():
         config.set('data_type', '10.10.218.199', 'RoundFlight_MultiFlight')
         config.set('data_type', '10.10.246.77', 'Rail_Bus')
 
-        if cfg_file_name == 'slave.spider.ini':
-            config.add_section('master')
-            config.set('master', 'host', '10.10.99.53:4141')
+        if cfg_file_name == 'subordinate.spider.ini':
+            config.add_section('main')
+            config.set('main', 'host', '10.10.99.53:4141')
 
             config.add_section('proxy')
             config.set('proxy', 'host', '10.10.239.46:8087')
 
-            config.add_section('slave')
-            config.set('slave', 'thread_num', 3)
+            config.add_section('subordinate')
+            config.set('subordinate', 'thread_num', 3)
 
-            config.set('slave', 'name', 'un_used_name')
-            config.set('slave', 'recv_real_time_request', 0)
+            config.set('subordinate', 'name', 'un_used_name')
+            config.set('subordinate', 'recv_real_time_request', 0)
 
             # uc
             config.add_section('mysql')
@@ -54,18 +54,18 @@ def generaterSlaveConfig():
             config.set('redis', 'host', '10.10.24.130')
             config.set('redis', 'port', 6379)
 
-        elif cfg_file_name == 'slave.validation.ini':
-            config.add_section('master')
-            config.set('master', 'host', '10.10.244.26:48068')
+        elif cfg_file_name == 'subordinate.validation.ini':
+            config.add_section('main')
+            config.set('main', 'host', '10.10.244.26:48068')
 
             config.add_section('proxy')
             config.set('proxy', 'host', '10.10.239.46:8087')
 
-            config.add_section('slave')
-            config.set('slave', 'thread_num', 1)
+            config.add_section('subordinate')
+            config.set('subordinate', 'thread_num', 1)
 
-            config.set('slave', 'name', 'un_used_name')
-            config.set('slave', 'recv_real_time_request', 1)
+            config.set('subordinate', 'name', 'un_used_name')
+            config.set('subordinate', 'recv_real_time_request', 1)
 
             # uc
             config.add_section('mysql')
@@ -85,18 +85,18 @@ def generaterSlaveConfig():
             config.set('redis', 'host', '10.10.24.130')
             config.set('redis', 'port', 6379)
 
-        elif cfg_file_name == 'slave.startwithD.ini':
-            config.add_section('master')
-            config.set('master', 'host', '10.19.102.211:48068')
+        elif cfg_file_name == 'subordinate.startwithD.ini':
+            config.add_section('main')
+            config.set('main', 'host', '10.19.102.211:48068')
 
             config.add_section('proxy')
             config.set('proxy', 'host', '10.19.191.121:8087')
 
-            config.add_section('slave')
-            config.set('slave', 'thread_num', 1)
+            config.add_section('subordinate')
+            config.set('subordinate', 'thread_num', 1)
 
-            config.set('slave', 'name', 'un_used_name')
-            config.set('slave', 'recv_real_time_request', 1)
+            config.set('subordinate', 'name', 'un_used_name')
+            config.set('subordinate', 'recv_real_time_request', 1)
 
             config.add_section('mysql')
             config.set('mysql', 'host', '10.10.154.38')
@@ -136,7 +136,7 @@ def generaterSlaveConfig():
             file_path = data[2].encode('utf-8')
             mode_name = data[3].encode('utf-8')
 
-            if file_path == 'slave_UC_parser' or file_path == 'slave_UC_validation':
+            if file_path == 'subordinate_UC_parser' or file_path == 'subordinate_UC_validation':
                 continue
 
             config.add_section(section_name)
@@ -150,4 +150,4 @@ def generaterSlaveConfig():
 
 
 if __name__ == '__main__':
-    generaterSlaveConfig()
+    generaterSubordinateConfig()

@@ -100,7 +100,7 @@ class Workers(object):
                 self.__workload.get_workloads()
                 time.sleep(5)
             except Exception, e:
-                logger.info('from master get task thread is  killed , sleep 3s ' + str(e))
+                logger.info('from main get task thread is  killed , sleep 3s ' + str(e))
                 time.sleep(8)
 
         logger.info('get task thread is killed')

@@ -8,7 +8,7 @@
 '''
 import sys
 import traceback
-from slave import UCConnection
+from subordinate import UCConnection
 from MySQLdb.cursors import DictCursor
 import datetime
 from logger import logger

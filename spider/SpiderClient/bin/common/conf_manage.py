@@ -15,7 +15,7 @@ class ConfigHelper:
         self.config.read(file_path)
 
         self.proxy_host = '10.10.239.46:8087'
-        self.master_host = '10.10.99.53:4141'
+        self.main_host = '10.10.99.53:4141'
         self.redis_host = '10.10.24.130'
         self.redis_port = 6379
         #  self.redis_db = self.config.getint('redis', 'db')
@@ -35,7 +35,7 @@ class ConfigHelper:
 
     def read_config(self):
         self.proxy_host = self.config.get("proxy", "host")
-        self.master_host = self.config.get("master", "host")
+        self.main_host = self.config.get("main", "host")
         self.redis_host = self.config.get("redis", "host")
         self.redis_port = self.config.getint("redis", "port")
         #  self.redis_db = self.config.getint('redis', 'db')
@@ -49,8 +49,8 @@ class ConfigHelper:
         self.spiderbase_passwd = self.config.get('spiderbase', 'pswd')
         self.spiderbase_db = self.config.get('spiderbase', 'db')
 
-        self.is_recv_real_time_request = self.config.getint("slave", "recv_real_time_request")
-        self.thread_num = self.config.getint("slave", "thread_num")
+        self.is_recv_real_time_request = self.config.getint("subordinate", "recv_real_time_request")
+        self.thread_num = self.config.getint("subordinate", "thread_num")
 
         self.data_type = dict(self.config.items('data_type'))
 

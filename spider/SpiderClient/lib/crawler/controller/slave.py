@@ -4,7 +4,7 @@
     @author: devin
     @time: 2014-02-23
     @desc:
-        slave
+        subordinate
 '''
 import threading
 import time
@@ -12,29 +12,29 @@ from util import http_server
 from util import http_client
 from util import timer
 from util.logger import logger
-from info import SlaveInfo
+from info import SubordinateInfo
 import urllib
 import os
 
 HEARTBEAT_TIME_SPAN = 10
 
-class Slave:
-    def __init__(self, host, port, master_host, workers, recv_real_time_request = False):
+class Subordinate:
+    def __init__(self, host, port, main_host, workers, recv_real_time_request = False):
         '''
             初始化
             @param host: 接收实时请求的ip，当recv_real_time_request为True的时候才使用
             @param port: 接收实时请求的端口，当recv_real_time_request为True的时候才使用
-            @param master_host: master的ip和端口
+            @param main_host: main的ip和端口
             @param workers: 线程组
             @param recv_real_time_request: 是否能接收实时请求，True表示可以接收，其它表示不能
         '''
 
         self.__server = http_server.HttpServer('0.0.0.0', port)
 
-        self.__client = http_client.HttpClient(master_host)
-        self.__master_host = master_host
-        # 保存slave的相关信息
-        self.info = SlaveInfo()
+        self.__client = http_client.HttpClient(main_host)
+        self.__main_host = main_host
+        # 保存subordinate的相关信息
+        self.info = SubordinateInfo()
         self.info.recv_real_time_request = recv_real_time_request
         self.info.server = host
         self.info.server_ip = host + ":" + str(port)
@@ -47,7 +47,7 @@ class Slave:
 
     def run(self):
         '''
-            启动slave
+            启动subordinate
         '''
         # register
         try:
@@ -55,10 +55,10 @@ class Slave:
         except:
             pass
 
-        # register to master
+        # register to main
         try:
-            if not self.register_in_master():
-                logger.error("Can't register to master.")
+            if not self.register_in_main():
+                logger.error("Can't register to main.")
         except:
             pass
 
@@ -84,7 +84,7 @@ class Slave:
 
     def heartbeat(self):
         '''
-            向master发起心跳请求，上报目前状态
+            向main发起心跳请求，上报目前状态
         '''
         query_json = {"server_ip":self.info.server_ip}
         import json
@@ -107,15 +107,15 @@ class Slave:
             #    print 'heartbeat for eouter test fail'
             #test for router done
 
-            http_client.HttpClient(self.__master_host).get(path)
+            http_client.HttpClient(self.__main_host).get(path)
         except Exception,e:
             import traceback
             error_info = str(traceback.format_exc().split('\n'))
             print 'heartbeat_error:' + error_info
 
-    def register_in_master(self):
+    def register_in_main(self):
         '''
-            向master注册，并获得master分配的id
+            向main注册，并获得main分配的id
         '''
         import json
         query_json = {"server_ip":self.info.server_ip}
@@ -126,9 +126,9 @@ class Slave:
                 "path": self.info.path,
                 "server_ip": self.info.server_ip,
                 "query": query_json_str,
-                "type": "register_slave",
+                "type": "register_subordinate",
                 'recv_real_time_request': self.info.recv_real_time_request}
-        path = "/register_slave?" + urllib.urlencode(data)
+        path = "/register_subordinate?" + urllib.urlencode(data)
         try:
             #router test
             #try:
@@ -143,17 +143,17 @@ class Slave:
             if len(id) == 0 or not id.isdigit():
                 return False
             self.info.id = int(id)
-            logger.info("slave register id is : %d" % self.info.id)
+            logger.info("subordinate register id is : %d" % self.info.id)
         except Exception,e:
             import traceback
             error_info = str(traceback.format_exc().split('\n'))
-            print 'register_slave:' + error_info
+            print 'register_subordinate:' + error_info
 
         return True
 
     def modify_thread_num(self, params):
         '''
-            响应用户或者master的修改线程请求
+            响应用户或者main的修改线程请求
         '''
         thread_num = params.get("thread_num")
         if thread_num == None or not thread_num.isdigit():

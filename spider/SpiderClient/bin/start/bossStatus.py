@@ -29,11 +29,11 @@ class BossStatus():
 
     def get_process_l(self):
         '''
-            获取启动的slave进程列表
+            获取启动的subordinate进程列表
         '''
         init_process_l = []
-        #cmd = "ps -ef | grep 'slave.py' | grep -v 'grep' | awk -F'/conf/' '{print $2}'"
-        cmd = "ps -ef | grep 'slave.py' | grep -v 'grep' | awk -F ' ' '{print $10}'"
+        #cmd = "ps -ef | grep 'subordinate.py' | grep -v 'grep' | awk -F'/conf/' '{print $2}'"
+        cmd = "ps -ef | grep 'subordinate.py' | grep -v 'grep' | awk -F ' ' '{print $10}'"
         init_process_l = commands.getoutput(cmd).split('\n')
 
         #print init_process_l
@@ -42,7 +42,7 @@ class BossStatus():
 
     def update_process_status(self):
         '''
-            检查slave进程是否被kill
+            检查subordinate进程是否被kill
         '''
         ISOTIMEFORMAT='%Y-%m-%d %X'
         cur_process_list = []
